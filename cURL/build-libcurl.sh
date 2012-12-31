@@ -111,9 +111,9 @@ echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
 echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-make # >> "${LOG}" 2>&1
-make install # >> "${LOG}" 2>&1
-make clean #>> "${LOG}" 2>&1
+make  >> "${LOG}" 2>&1
+make install  >> "${LOG}" 2>&1
+make clean >> "${LOG}" 2>&1
 
 echo "Building libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
 
@@ -153,9 +153,9 @@ echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
 echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-make # >> "${LOG}" 2>&1
-make install # >> "${LOG}" 2>&1
-make clean # >> "${LOG}" 2>&1
+make  >> "${LOG}" 2>&1
+make install  >> "${LOG}" 2>&1
+make clean  >> "${LOG}" 2>&1
 
 echo "Building libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
 #############
@@ -194,9 +194,9 @@ echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
 echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-make # >> "${LOG}" 2>&1
-make install # >> "${LOG}" 2>&1
-make clean # >> "${LOG}" 2>&1
+make >> "${LOG}" 2>&1
+make install  >> "${LOG}" 2>&1
+make clean >> "${LOG}" 2>&1
 
 echo "Building libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
 #############
