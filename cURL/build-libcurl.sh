@@ -107,7 +107,7 @@ LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}.sdk/build-libcurl-${VERSION}.lo
 
 echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}.sdk -disable-shared -with-random=/dev/urandom --without-ssl --without-libssh2 # --with-ssl # > "${LOG}" 2>&1
+./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}.sdk -disable-shared -with-random=/dev/urandom --with-ssl  > "${LOG}" 2>&1
 
 echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
@@ -149,7 +149,7 @@ LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-libcurl-${VER
 
 echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --host=${ARCH}-apple-darwin --disable-shared -with-random=/dev/urandom --without-ssl --without-libssh2 # --with-ssl # > "${LOG}" 2>&1
+./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --host=${ARCH}-apple-darwin --disable-shared -with-random=/dev/urandom --with-ssl  > "${LOG}" 2>&1
 
 echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
@@ -190,7 +190,7 @@ LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-libcurl-${VER
 
 echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --host=${ARCH}-apple-darwin --disable-shared -with-random=/dev/urandom --without-ssl --without-libssh2 # --with-ssl # > "${LOG}" 2>&1
+./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --host=${ARCH}-apple-darwin --disable-shared -with-random=/dev/urandom --with-ssl  > "${LOG}" 2>&1
 
 echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
