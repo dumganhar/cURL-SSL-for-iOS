@@ -22,7 +22,7 @@
 #  Change values here							  #
 #									  #
 VERSION="1.0.1c"							  #
-SDKVERSION="6.0"							  #
+SDKVERSION="6.1"							  #
 #									  #
 ###########################################################################
 #									  #
@@ -195,20 +195,20 @@ echo "Building openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
 # Universal Library
 echo "Build universal library..."
 
-$LIPO -create ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/lib/libssl.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7.sdk/lib/libssl.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7s.sdk/lib/libssl.a -output ${CURRENTPATH}/libssl.a
+# $LIPO -create ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/lib/libssl.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7.sdk/lib/libssl.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7s.sdk/lib/libssl.a -output ${CURRENTPATH}/libssl.a
 
-$LIPO -create ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/lib/libcrypto.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7.sdk/lib/libcrypto.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7s.sdk/lib/libcrypto.a -output ${CURRENTPATH}/libcrypto.a
-# remove debugging info
-$STRIP -S ${CURRENTPATH}/libssl.a
-$LIPO -info ${CURRENTPATH}/libssl.a
+# $LIPO -create ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/lib/libcrypto.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7.sdk/lib/libcrypto.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7s.sdk/lib/libcrypto.a -output ${CURRENTPATH}/libcrypto.a
+# # remove debugging info
+# $STRIP -S ${CURRENTPATH}/libssl.a
+# $LIPO -info ${CURRENTPATH}/libssl.a
 
-$STRIP -S ${CURRENTPATH}/libcrypto.a
-$LIPO -info ${CURRENTPATH}/libcrypto.a
+# $STRIP -S ${CURRENTPATH}/libcrypto.a
+# $LIPO -info ${CURRENTPATH}/libcrypto.a
 
-mkdir -p ${CURRENTPATH}/include
-cp -R ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/include/openssl ${CURRENTPATH}/include/
-echo "Building done."
-echo "Cleaning up..."
-rm -rf ${CURRENTPATH}/src
-rm -rf ${CURRENTPATH}/bin
+# mkdir -p ${CURRENTPATH}/include
+# cp -R ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/include/openssl ${CURRENTPATH}/include/
+# echo "Building done."
+# echo "Cleaning up..."
+# rm -rf ${CURRENTPATH}/src
+# rm -rf ${CURRENTPATH}/bin
 echo "Done."

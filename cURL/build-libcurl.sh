@@ -22,7 +22,7 @@
 #  Change values here							  #
 #									  #
 VERSION="7.26.0"							  #
-SDKVERSION="6.0"							  #
+SDKVERSION="6.1"							  #
 OPENSSL="${PWD}/../OpenSSL"						  #
 #									  #
 ###########################################################################
@@ -205,15 +205,15 @@ echo "Building libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
 # Universal Library
 echo "Build universal library..."
 
-$LIPO -create ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/lib/libcurl.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7.sdk/lib/libcurl.a  ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7s.sdk/lib/libcurl.a -output ${CURRENTPATH}/libcurl.a
-# remove debugging info
-$STRIP -S ${CURRENTPATH}/libcurl.a
-$LIPO -info ${CURRENTPATH}/libcurl.a
+# $LIPO -create ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/lib/libcurl.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7.sdk/lib/libcurl.a  ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7s.sdk/lib/libcurl.a -output ${CURRENTPATH}/libcurl.a
+# # remove debugging info
+# $STRIP -S ${CURRENTPATH}/libcurl.a
+# $LIPO -info ${CURRENTPATH}/libcurl.a
     
-mkdir -p ${CURRENTPATH}/include
-cp -R ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/include/curl ${CURRENTPATH}/include/
-echo "Building all steps done."
-echo "Cleaning up..."
-rm -rf ${CURRENTPATH}/src
-rm -rf ${CURRENTPATH}/bin
+# mkdir -p ${CURRENTPATH}/include
+# cp -R ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/include/curl ${CURRENTPATH}/include/
+# echo "Building all steps done."
+# echo "Cleaning up..."
+# rm -rf ${CURRENTPATH}/src
+# rm -rf ${CURRENTPATH}/bin
 echo "Done."
