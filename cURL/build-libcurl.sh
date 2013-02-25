@@ -23,7 +23,7 @@
 #									  #
 VERSION="7.26.0"							  #
 SDKVERSION="6.1"							  #
-OPENSSL="${PWD}/../OpenSSL"						  #
+OPENSSL=""
 #									  #
 ###########################################################################
 #									  #
@@ -94,6 +94,8 @@ if ! test -d "$ios_sdk_root" ; then
     echo "Invalid SDK version"
 fi
 
+OPENSSL="${CURRENTPATH}/../OpenSSL/bin/${PLATFORM}${SDKVERSION}.sdk"
+
 export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
 export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
 export CXXFLAGS="$CFLAGS"
@@ -107,7 +109,7 @@ LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}.sdk/build-libcurl-${VERSION}.lo
 
 echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}.sdk -disable-shared -with-random=/dev/urandom --with-ssl # --without-ssl --without-libssh2 # --with-ssl # > "${LOG}" 2>&1
+./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}.sdk -disable-shared -with-random=/dev/urandom --with-ssl=${OPENSSL} # --without-ssl --without-libssh2 # --with-ssl # > "${LOG}" 2>&1
 
 echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
@@ -136,6 +138,7 @@ if ! test -d "$ios_sdk_root" ; then
     echo "Invalid SDK version"
 fi
 
+OPENSSL="${CURRENTPATH}/../OpenSSL/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
 export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
 export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
 export CXXFLAGS="$CFLAGS"
@@ -149,7 +152,7 @@ LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-libcurl-${VER
 
 echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --host=${ARCH}-apple-darwin --disable-shared -with-random=/dev/urandom --with-ssl # > "${LOG}" 2>&1
+./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --host=${ARCH}-apple-darwin --disable-shared -with-random=/dev/urandom --with-ssl=${OPENSSL} # > "${LOG}" 2>&1
 
 echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
@@ -177,6 +180,8 @@ if ! test -d "$ios_sdk_root" ; then
     echo "Invalid SDK version"
 fi
 
+OPENSSL="${CURRENTPATH}/../OpenSSL/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
+
 export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
 export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
 export CXXFLAGS="$CFLAGS"
@@ -190,7 +195,7 @@ LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-libcurl-${VER
 
 echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --host=${ARCH}-apple-darwin --disable-shared -with-random=/dev/urandom --with-ssl # > "${LOG}" 2>&1
+./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --host=${ARCH}-apple-darwin --disable-shared -with-random=/dev/urandom --with-ssl=${OPENSSL} # > "${LOG}" 2>&1
 
 echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
