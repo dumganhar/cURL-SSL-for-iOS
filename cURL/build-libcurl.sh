@@ -22,7 +22,7 @@
 #  Change values here							  #
 #									  #
 VERSION="7.26.0"							  #
-SDKVERSION="6.1"							  #
+SDKVERSION="7.1"							  #
 OPENSSL=""
 #									  #
 ###########################################################################
@@ -36,6 +36,7 @@ DEVELOPER=`xcode-select --print-path`
 
 LIPO="xcrun -sdk iphoneos lipo"
 STRIP="xcrun -sdk iphoneos strip"
+ios_deploy_version="7.0"
 
 # test for Xcode 4.3+
 if ! test -d "${DEVELOPER}/Platforms" ; then
@@ -94,22 +95,22 @@ if ! test -d "$ios_sdk_root" ; then
     echo "Invalid SDK version"
 fi
 
-OPENSSL="${CURRENTPATH}/../OpenSSL/bin/${PLATFORM}${SDKVERSION}.sdk"
+OPENSSL="${CURRENTPATH}/../OpenSSL/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
 
 export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
-export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
+export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -D_FORTIFY_SOURCE=0 -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
 export CXXFLAGS="$CFLAGS"
 export CPPFLAGS=""
 
 #export CC="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/usr/bin/gcc"
 #export CFLAGS="-arch ${ARCH} -isysroot ${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/SDKs/${PLATFORM}${SDKVERSION}.sdk -I${OPENSSL}/include -L${OPENSSL}"
-mkdir -p "${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}.sdk"
+mkdir -p "${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
 
-LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}.sdk/build-libcurl-${VERSION}.log"
+LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-libcurl-${VERSION}.log"
 
 echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}.sdk -disable-shared -with-random=/dev/urandom --with-ssl=${OPENSSL} # --without-ssl --without-libssh2 # --with-ssl # > "${LOG}" 2>&1
+./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk -disable-shared -with-random=/dev/urandom --with-ssl=${OPENSSL} # --without-ssl --without-libssh2 # --with-ssl # > "${LOG}" 2>&1
 
 echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
@@ -140,7 +141,7 @@ fi
 
 OPENSSL="${CURRENTPATH}/../OpenSSL/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
 export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
-export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
+export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -D_FORTIFY_SOURCE=0 -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
 export CXXFLAGS="$CFLAGS"
 export CPPFLAGS=""
 
@@ -183,7 +184,7 @@ fi
 OPENSSL="${CURRENTPATH}/../OpenSSL/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
 
 export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
-export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
+export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -D_FORTIFY_SOURCE=0 -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
 export CXXFLAGS="$CFLAGS"
 export CPPFLAGS=""
 
@@ -206,17 +207,105 @@ make clean >> "${LOG}" 2>&1
 echo "Building libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
 #############
 
+
+#############
+# iPhoneOS arm64
+ios_arch="arm64"
+ARCH=${ios_arch}
+PLATFORM="iPhoneOS"
+ios_target=${PLATFORM}
+
+echo "Building libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
+echo "Please stand by..."
+
+# test to see if the actual sdk exists
+ios_sdk_root="$xcode_base"/$ios_target.platform/Developer/SDKs/$ios_target"$ios_sdk_version".sdk
+
+if ! test -d "$ios_sdk_root" ; then
+echo "Invalid SDK version"
+fi
+
+OPENSSL="${CURRENTPATH}/../OpenSSL/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
+
+export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
+export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -D_FORTIFY_SOURCE=0 -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
+export CXXFLAGS="$CFLAGS"
+export CPPFLAGS=""
+
+#export CC="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/usr/bin/gcc"
+#export CFLAGS="-arch ${ARCH} -isysroot ${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/SDKs/${PLATFORM}${SDKVERSION}.sdk -I${OPENSSL}/include -L${OPENSSL}"
+mkdir -p "${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
+
+LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-libcurl-${VERSION}.log"
+
+echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
+
+./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --host=arm-apple-darwin --disable-shared -with-random=/dev/urandom --with-ssl=${OPENSSL} # > "${LOG}" 2>&1
+
+echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
+
+make >> "${LOG}" 2>&1
+make install  >> "${LOG}" 2>&1
+make clean >> "${LOG}" 2>&1
+
+echo "Building libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
+#############
+
+
+#############
+# iPhoneSimulator x86_64
+ios_arch="x86_64"
+ARCH=${ios_arch}
+PLATFORM="iPhoneSimulator"
+ios_target=${PLATFORM}
+
+echo "Building libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
+echo "Please stand by..."
+
+# test to see if the actual sdk exists
+ios_sdk_root="$xcode_base"/$ios_target.platform/Developer/SDKs/$ios_target"$ios_sdk_version".sdk
+
+if ! test -d "$ios_sdk_root" ; then
+echo "Invalid SDK version"
+fi
+
+OPENSSL="${CURRENTPATH}/../OpenSSL/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
+
+export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
+export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -D_FORTIFY_SOURCE=0 -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -I${OPENSSL}/include -L${OPENSSL} -pipe -Wno-implicit-int -Wno-return-type"
+export CXXFLAGS="$CFLAGS"
+export CPPFLAGS=""
+
+#export CC="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/usr/bin/gcc"
+#export CFLAGS="-arch ${ARCH} -isysroot ${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/SDKs/${PLATFORM}${SDKVERSION}.sdk -I${OPENSSL}/include -L${OPENSSL}"
+mkdir -p "${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
+
+LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-libcurl-${VERSION}.log"
+
+echo "Configure libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
+
+./configure -prefix=${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk --host=arm-apple-darwin --disable-shared -with-random=/dev/urandom --with-ssl=${OPENSSL} # > "${LOG}" 2>&1
+
+echo "Make libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
+
+make >> "${LOG}" 2>&1
+make install  >> "${LOG}" 2>&1
+make clean >> "${LOG}" 2>&1
+
+echo "Building libcurl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
+#############
+
 #############
 # Universal Library
-echo "Build universal library..."
+# echo "Build universal library..."
 
-# $LIPO -create ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/lib/libcurl.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7.sdk/lib/libcurl.a  ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7s.sdk/lib/libcurl.a -output ${CURRENTPATH}/libcurl.a
-# # remove debugging info
+# $LIPO -create ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}-i386.sdk/lib/libcurl.a ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}-x86_64.sdk/lib/libcurl.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7.sdk/lib/libcurl.a  ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-armv7s.sdk/lib/libcurl.a ${CURRENTPATH}/bin/iPhoneOS${SDKVERSION}-arm64.sdk/lib/libcurl.a -output ${CURRENTPATH}/libcurl.a
+# remove debugging info
 # $STRIP -S ${CURRENTPATH}/libcurl.a
 # $LIPO -info ${CURRENTPATH}/libcurl.a
     
 # mkdir -p ${CURRENTPATH}/include
-# cp -R ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}.sdk/include/curl ${CURRENTPATH}/include/
+# cp -R ${CURRENTPATH}/bin/iPhoneSimulator${SDKVERSION}-i386.sdk/include/curl ${CURRENTPATH}/include/
 # echo "Building all steps done."
 # echo "Cleaning up..."
 # rm -rf ${CURRENTPATH}/src
