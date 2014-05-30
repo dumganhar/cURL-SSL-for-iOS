@@ -57,7 +57,7 @@ tar zxf openssl-${VERSION}.tar.gz -C "${CURRENTPATH}/src"
 cd "${CURRENTPATH}/src/openssl-${VERSION}"
 
 xcode_base="${DEVELOPER}/Platforms"
-ios_sdk_root="${DEVELOPER}/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk"
+# ios_sdk_root="${DEVELOPER}/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.1.sdk"
 ios_toolchain="${DEVELOPER}/Toolchains/XcodeDefault.xctoolchain/usr/bin"
 ios_sdk_version=${SDKVERSION}
 
@@ -87,6 +87,7 @@ ios_sdk_root="$xcode_base"/$ios_target.platform/Developer/SDKs/$ios_target"$ios_
 if ! test -d "$ios_sdk_root" ; then
 echo "Invalid SDK version"
 fi
+export CC="$ios_toolchain/clang -isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
 export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
 export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
 export CXXFLAGS="$CFLAGS"
@@ -98,7 +99,7 @@ LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-openssl-${VER
 
 echo "Configure openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 
-./configure BSD-generic32 --openssldir="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk" > "${LOG}" 2>&1
+./configure darwin-i386-cc --openssldir="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk" > "${LOG}" 2>&1
 # add -isysroot to CC=
 sed -ie "s!^CFLAG=!CFLAG=-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type !" "Makefile"
 echo "Make openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
@@ -108,6 +109,8 @@ make install >> "${LOG}" 2>&1
 make clean >> "${LOG}" 2>&1
 
 echo "Building openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
+
+export CC="$ios_toolchain/clang"
 #############
 
 #############
@@ -125,6 +128,50 @@ ios_sdk_root="$xcode_base"/$ios_target.platform/Developer/SDKs/$ios_target"$ios_
 if ! test -d "$ios_sdk_root" ; then
     echo "Invalid SDK version"
 fi
+export CC="$ios_toolchain/clang -isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
+export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
+export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
+export CXXFLAGS="$CFLAGS"
+export CPPFLAGS=""
+
+#export CC="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/usr/bin/gcc -arch ${ARCH}"
+mkdir -p "${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
+
+LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-openssl-${VERSION}.log"
+
+echo "Configure openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
+
+./configure BSD-generic32 --openssldir="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk" > "${LOG}" 2>&1
+
+sed -ie "s!^CFLAG=!CFLAG=-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type !" "Makefile"
+# remove sig_atomic for iPhoneOS
+sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
+
+echo "Make openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
+
+make  "${LOG}" 2>&1
+make install  "${LOG}" 2>&1
+make clean "${LOG}" 2>&1
+
+echo "Building openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
+export CC="$ios_toolchain/clang"
+
+#############
+# iPhoneOS armv7s
+ios_arch="armv7s"
+ARCH=${ios_arch}
+PLATFORM="iPhoneOS"
+ios_target=${PLATFORM}
+echo "Building openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
+echo "Please stand by..."
+
+# test to see if the actual sdk exists
+ios_sdk_root="$xcode_base"/$ios_target.platform/Developer/SDKs/$ios_target"$ios_sdk_version".sdk
+
+if ! test -d "$ios_sdk_root" ; then
+echo "Invalid SDK version"
+fi
+export CC="$ios_toolchain/clang -isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
 export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
 export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
 export CXXFLAGS="$CFLAGS"
@@ -151,9 +198,13 @@ make clean "${LOG}" 2>&1
 
 echo "Building openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
 
+export CC="$ios_toolchain/clang"
+
 #############
-# iPhoneOS armv7s
-ios_arch="armv7s"
+
+#############
+# iPhoneOS armv64
+ios_arch="arm64"
 ARCH=${ios_arch}
 PLATFORM="iPhoneOS"
 ios_target=${PLATFORM}
@@ -166,6 +217,7 @@ ios_sdk_root="$xcode_base"/$ios_target.platform/Developer/SDKs/$ios_target"$ios_
 if ! test -d "$ios_sdk_root" ; then
 echo "Invalid SDK version"
 fi
+export CC="$ios_toolchain/clang -isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
 export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
 export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
 export CXXFLAGS="$CFLAGS"
@@ -191,49 +243,8 @@ make install  "${LOG}" 2>&1
 make clean "${LOG}" 2>&1
 
 echo "Building openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
+export CC="$ios_toolchain/clang"
 
-#############
-
-#############
-# iPhoneOS armv64
-ios_arch="arm64"
-ARCH=${ios_arch}
-PLATFORM="iPhoneOS"
-ios_target=${PLATFORM}
-echo "Building openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
-echo "Please stand by..."
-
-# test to see if the actual sdk exists
-ios_sdk_root="$xcode_base"/$ios_target.platform/Developer/SDKs/$ios_target"$ios_sdk_version".sdk
-
-if ! test -d "$ios_sdk_root" ; then
-echo "Invalid SDK version"
-fi
-export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
-export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
-export CXXFLAGS="$CFLAGS"
-export CPPFLAGS=""
-
-#export CC="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/usr/bin/gcc -arch ${ARCH}"
-mkdir -p "${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
-
-LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-openssl-${VERSION}.log"
-
-echo "Configure openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
-
-./configure BSD-generic32 --openssldir="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk" > "${LOG}" 2>&1
-
-sed -ie "s!^CFLAG=!CFLAG=-isysroot $ios_sdk_root -arch $ios_arch -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type !" "Makefile"
-# remove sig_atomic for iPhoneOS
-sed -ie "s!static volatile sig_atomic_t intr_signal;!static volatile intr_signal;!" "crypto/ui/ui_openssl.c"
-
-echo "Make openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
-
-make  "${LOG}" 2>&1
-make install  "${LOG}" 2>&1
-make clean "${LOG}" 2>&1
-
-echo "Building openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
 
 
 #############
@@ -246,17 +257,19 @@ echo "Building openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}"
 echo "Please stand by..."
 
 # test to see if the actual sdk exists
-ios_sdk_root="$xcode_base"/$ios_target.platform/Developer/SDKs/$ios_target"$ios_sdk_version".sdk
+ios_sdk_root="${DEVELOPER}/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator7.1.sdk"
+
+export CC="$ios_toolchain"/clang
 
 if ! test -d "$ios_sdk_root" ; then
     echo "Invalid SDK version"
 fi
-export LDFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -v"
-export CFLAGS="-isysroot $ios_sdk_root -arch $ios_arch -D_FORTIFY_SOURCE=0 -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
+export CC="$ios_toolchain/clang -isysroot $ios_sdk_root -D_FORTIFY_SOURCE=0 -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
+export LDFLAGS="-arch $ios_arch -isysroot $ios_sdk_root -v"
+export CFLAGS="-arch $ios_arch -isysroot $ios_sdk_root -D_FORTIFY_SOURCE=0 -miphoneos-version-min=$ios_deploy_version -I$ios_sdk_root/usr/include -pipe -Wno-implicit-int -Wno-return-type"
 export CXXFLAGS="$CFLAGS"
 export CPPFLAGS=""
 
-#export CC="${DEVELOPER}/Platforms/${PLATFORM}.platform/Developer/usr/bin/gcc -arch ${ARCH}"
 mkdir -p "${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk"
 LOG="${CURRENTPATH}/bin/${PLATFORM}${SDKVERSION}-${ARCH}.sdk/build-openssl-${VERSION}.log"
 
@@ -271,6 +284,7 @@ make install  "${LOG}" 2>&1
 make clean "${LOG}" 2>&1
 
 echo "Building openssl for ${PLATFORM} ${SDKVERSION} ${ARCH}, finished"
+export CC="$ios_toolchain"/clang
 
 #############
 # Universal Library
